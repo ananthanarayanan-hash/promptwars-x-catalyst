@@ -38,13 +38,13 @@ export default function EmergencyModal() {
             EMERGENCY ASSISTANCE
           </h2>
           <p className="text-base text-slate-300 font-medium mt-1">
-            Need urgent help, Ramesh Uncle? We are connecting you immediately.
+            Need urgent assistance, {patient.name}? Connecting you immediately.
           </p>
         </div>
 
         {/* Direct Action Call Buttons */}
         <div className="space-y-4 mb-6">
-          {/* Call Daughter / Primary Caretaker */}
+          {/* Call Primary Caretaker */}
           <a
             href={`tel:${primaryContact.phone}`}
             onClick={handleConfirmEmergency}
@@ -53,27 +53,27 @@ export default function EmergencyModal() {
             <div className="flex items-center gap-3">
               <PhoneCall className="w-7 h-7" />
               <div className="text-left">
-                <div className="text-lg leading-tight">Call {primaryContact.name} (Daughter)</div>
+                <div className="text-lg leading-tight">Call {primaryContact.name} ({primaryContact.relation || 'Caretaker'})</div>
                 <div className="text-xs font-mono font-medium text-emerald-100">{primaryContact.phone}</div>
               </div>
             </div>
             <span className="text-sm bg-emerald-700 px-3 py-1.5 rounded-xl uppercase font-bold">Call Now</span>
           </a>
 
-          {/* Call 108 Emergency Medical Service */}
+          {/* Call 911 Emergency Medical Service */}
           <a
-            href="tel:108"
+            href="tel:911"
             onClick={handleConfirmEmergency}
             className="w-full h-18 p-4 rounded-2xl bg-red-600 hover:bg-red-500 active:bg-red-700 text-white font-black text-xl flex items-center justify-between shadow-xl transition-all border-2 border-red-400"
           >
             <div className="flex items-center gap-3">
               <ShieldAlert className="w-7 h-7" />
               <div className="text-left">
-                <div className="text-lg leading-tight">Call 108 Ambulance</div>
-                <div className="text-xs font-medium text-red-100">National Medical Emergency</div>
+                <div className="text-lg leading-tight">Call 911 Emergency EMS</div>
+                <div className="text-xs font-medium text-red-100">National Emergency Dispatch</div>
               </div>
             </div>
-            <span className="text-sm bg-red-700 px-3 py-1.5 rounded-xl uppercase font-bold">Emergency 108</span>
+            <span className="text-sm bg-red-700 px-3 py-1.5 rounded-xl uppercase font-bold">Emergency 911</span>
           </a>
 
           {/* Send Instant Silent Caregiver SOS Email */}
@@ -85,16 +85,16 @@ export default function EmergencyModal() {
             className="w-full py-3.5 px-4 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-sm border border-slate-700 transition-colors flex items-center justify-center gap-2"
           >
             <AlertOctagon className="w-4 h-4 text-red-400" />
-            <span>Send Silent SOS Notification & Location to Priya</span>
+            <span>Send Silent SOS Notification & Location to {primaryContact.name}</span>
           </button>
         </div>
 
         {/* Safety Note & Dismiss */}
         <div className="text-center pt-2 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
-          <span>Registered Address: 4th Main, Malleshwaram</span>
+          <span className="truncate max-w-[280px]">Residence: {patient.location}</span>
           <button
             onClick={() => setIsEmergencyModalOpen(false)}
-            className="text-slate-300 hover:text-white underline font-semibold"
+            className="text-slate-300 hover:text-white underline font-semibold shrink-0"
           >
             I'm okay, close this
           </button>

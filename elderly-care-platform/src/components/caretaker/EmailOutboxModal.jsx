@@ -221,7 +221,7 @@ export default function EmailOutboxModal() {
               {/* Envelope Meta */}
               <div className="space-y-2 text-xs bg-slate-50 p-4 rounded-xl border border-slate-200 font-mono mb-4">
                 <div>
-                  <strong className="text-slate-500">From:</strong> alerts@aarogyacare.org (AarogyaCare Healthcare Gateway)
+                  <strong className="text-slate-500">From:</strong> alerts@eldercareform.org (Elder Care Form Clinical Gateway)
                 </div>
                 <div>
                   <strong className="text-slate-500">To:</strong> <span className="text-slate-900 font-bold">{selectedEmail.recipient}</span>

@@ -11,7 +11,8 @@ import {
   ShieldAlert,
   BellRing,
   Pill,
-  Send
+  Activity,
+  Edit3
 } from 'lucide-react';
 
 export default function OverviewTab({ setActiveTab }) {
@@ -25,15 +26,52 @@ export default function OverviewTab({ setActiveTab }) {
     simulateUpcomingAlert,
     triggerEmergencyAlert,
     markDose,
-    aiInsights
+    aiInsights,
+    setIsProfileModalOpen
   } = useApp();
 
   const nextAppointment = appointments[0];
   const upcomingMedications = medications.filter(m => m.status === 'upcoming');
-  const missedMedications = medications.filter(m => m.status === 'missed');
+  const caretakerName = patient.emergencyContacts[0]?.name || 'Sarah Jenkins';
 
   return (
     <div className="space-y-8">
+      {/* Patient Profile & Diagnosis Highlight Banner */}
+      <div className="p-5 rounded-2xl bg-white border-2 border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="flex items-start gap-3.5">
+          <div className="p-3 rounded-2xl bg-blue-100 text-blue-800">
+            <Activity className="w-6 h-6" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <h2 className="text-xl font-bold text-slate-900">{patient.name}</h2>
+              <span className="text-xs px-2 py-0.5 rounded-md font-mono bg-slate-100 text-slate-700">
+                Age {patient.age} • {patient.gender}
+              </span>
+            </div>
+            <div className="flex flex-wrap items-center gap-1.5 mt-1.5">
+              <span className="text-xs font-bold text-slate-500 mr-1">Active Diagnosis:</span>
+              {patient.conditions.map((condition) => (
+                <span
+                  key={condition}
+                  className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-50 text-blue-800 border border-blue-200"
+                >
+                  {condition}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <button
+          onClick={() => setIsProfileModalOpen(true)}
+          className="self-start md:self-center inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold border border-slate-300 transition-colors"
+        >
+          <Edit3 className="w-3.5 h-3.5 text-blue-600" />
+          <span>Edit Names & Diagnoses</span>
+        </button>
+      </div>
+
       {/* Judge Quick Action Banner */}
       <div className="p-5 rounded-2xl bg-gradient-to-r from-slate-900 to-slate-800 border-2 border-slate-700 text-white shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
@@ -85,7 +123,7 @@ export default function OverviewTab({ setActiveTab }) {
           <div className="flex items-baseline gap-2">
             <span className="text-4xl font-black text-slate-900">{stats.adherenceRate}%</span>
             <span className="text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-              Good
+              Optimal
             </span>
           </div>
           <p className="text-xs text-slate-500 mt-2">
@@ -122,7 +160,7 @@ export default function OverviewTab({ setActiveTab }) {
             <span className="text-xs font-medium text-amber-700">Remaining</span>
           </div>
           <p className="text-xs text-slate-500 mt-2">
-            Next: {upcomingMedications[0]?.name || 'All done for today'}
+            Next: {upcomingMedications[0]?.name || 'All doses completed'}
           </p>
         </div>
 
@@ -141,7 +179,7 @@ export default function OverviewTab({ setActiveTab }) {
             </span>
           </div>
           <p className="text-xs text-slate-500 mt-2">
-            {stats.missed > 0 ? 'Caregiver SMS/Email dispatched' : 'Care protocol on track'}
+            {stats.missed > 0 ? `Alert sent to Caregiver ${caretakerName}` : 'Regimen on track'}
           </p>
         </div>
       </div>
@@ -153,7 +191,7 @@ export default function OverviewTab({ setActiveTab }) {
           <div className="flex items-center justify-between mb-6">
             <div>
               <h3 className="text-lg font-bold text-slate-900">7-Day Adherence Trend</h3>
-              <p className="text-xs text-slate-500">Weekly compliance pattern for Ramesh Iyer</p>
+              <p className="text-xs text-slate-500">Weekly compliance pattern for {patient.name}</p>
             </div>
             <span className="text-xs font-bold px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 font-mono">
               Avg: 86.2%
@@ -201,7 +239,7 @@ export default function OverviewTab({ setActiveTab }) {
                 &lt;70% (At Risk)
               </span>
             </div>
-            <span>Thursday showed dip due to delayed dinner</span>
+            <span>Thursday showed dip due to late dining schedule</span>
           </div>
         </div>
 
@@ -307,7 +345,7 @@ export default function OverviewTab({ setActiveTab }) {
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
                 <Calendar className="w-5 h-5 text-blue-600" />
-                Upcoming Doctor Visit
+                Upcoming Medical Consultation
               </h3>
               <span className="text-xs font-bold px-2 py-0.5 rounded-md bg-blue-100 text-blue-800">
                 In 5 Days
@@ -319,7 +357,7 @@ export default function OverviewTab({ setActiveTab }) {
                 <div className="font-bold text-base text-slate-900">{nextAppointment.doctorName}</div>
                 <div className="text-xs font-semibold text-blue-600">{nextAppointment.specialty}</div>
                 <div className="text-xs text-slate-600 mt-2">
-                  <strong>Hospital:</strong> {nextAppointment.hospital}
+                  <strong>Facility:</strong> {nextAppointment.hospital}
                 </div>
                 <div className="text-xs text-slate-600 mt-1">
                   <strong>Date & Time:</strong> {new Date(nextAppointment.dateTime).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}
@@ -328,11 +366,11 @@ export default function OverviewTab({ setActiveTab }) {
                   <strong>Purpose:</strong> {nextAppointment.purpose}
                 </div>
                 <div className="mt-3 p-2.5 rounded-lg bg-amber-50 border border-amber-200 text-amber-900 text-[11px] leading-relaxed">
-                  <strong>Prep:</strong> {nextAppointment.instructions}
+                  <strong>Preparation:</strong> {nextAppointment.instructions}
                 </div>
               </div>
             ) : (
-              <p className="text-xs text-slate-500">No scheduled doctor visits.</p>
+              <p className="text-xs text-slate-500">No scheduled visits.</p>
             )}
           </div>
 

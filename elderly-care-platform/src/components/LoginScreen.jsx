@@ -1,44 +1,68 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
-import { Shield, KeyRound, UserCheck, HeartPulse, Stethoscope, Users, AlertCircle, ArrowRight } from 'lucide-react';
+import {
+  Shield,
+  KeyRound,
+  UserCheck,
+  HeartPulse,
+  Stethoscope,
+  Users,
+  AlertCircle,
+  ArrowRight,
+  Sparkles,
+  ClipboardCheck,
+  CheckCircle2,
+  Building2,
+  Activity,
+  Edit3
+} from 'lucide-react';
 
 export default function LoginScreen() {
-  const { passcodes, setCurrentRole, patient } = useApp();
+  const {
+    passcodes,
+    setCurrentRole,
+    patient,
+    setIsProfileModalOpen
+  } = useApp();
+
   const [pin, setPin] = useState('');
   const [selectedRole, setSelectedRole] = useState('elderly'); // 'elderly' | 'caretaker' | 'family'
   const [errorMsg, setErrorMsg] = useState('');
   const [isShaking, setIsShaking] = useState(false);
 
+  const caretakerName = patient.emergencyContacts[0]?.name || 'Sarah Jenkins';
+  const familyName = patient.emergencyContacts[1]?.name || 'David Pendelton';
+
   const rolesConfig = [
     {
       id: 'elderly',
-      label: 'Senior Mode',
+      label: 'Patient / Senior View',
       subtitle: `${patient.name} (${patient.age} yrs)`,
       icon: HeartPulse,
       demoPin: passcodes.elderly,
       color: 'border-blue-600 bg-blue-50/50 text-blue-900',
       activeBadge: 'bg-blue-600 text-white',
-      desc: 'Oversized text, high contrast, 1-tap taken buttons & emergency SOS'
+      desc: 'Oversized typography, high contrast, 1-tap "Mark as Taken", audio readout & SOS assistance'
     },
     {
       id: 'caretaker',
       label: 'Caretaker Dashboard',
-      subtitle: `${patient.emergencyContacts[0].name} (Primary)`,
+      subtitle: `${caretakerName} (Primary Caregiver)`,
       icon: Stethoscope,
       demoPin: passcodes.caretaker,
       color: 'border-emerald-600 bg-emerald-50/50 text-emerald-900',
       activeBadge: 'bg-emerald-600 text-white',
-      desc: 'Adherence analytics, schedule manager, appointment & email alert logs'
+      desc: 'Clinical adherence tracking, schedule manager, appointments & automated email alert logs'
     },
     {
       id: 'family',
-      label: 'Family Monitor',
-      subtitle: `${patient.emergencyContacts[1].name} (Remote Monitor)`,
+      label: 'Family Monitor View',
+      subtitle: `${familyName} (Remote Oversight)`,
       icon: Users,
       demoPin: passcodes.family,
       color: 'border-purple-600 bg-purple-50/50 text-purple-900',
       activeBadge: 'bg-purple-600 text-white',
-      desc: 'Remote oversight, daily vitals, weekly health reports & care logs'
+      desc: 'Remote weekly adherence digests, physician appointments, and real-time care alerts'
     }
   ];
 
@@ -70,7 +94,7 @@ export default function LoginScreen() {
       setCurrentRole(role);
     } else {
       setIsShaking(true);
-      setErrorMsg(`Incorrect PIN for ${rolesConfig.find(r => r.id === role)?.label}. Demo PIN is ${targetPin}`);
+      setErrorMsg(`Incorrect passcode for ${rolesConfig.find(r => r.id === role)?.label}. Demo passcode is ${targetPin}`);
       setTimeout(() => {
         setIsShaking(false);
         setPin('');
@@ -83,111 +107,169 @@ export default function LoginScreen() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 flex flex-col justify-center items-center p-4 sm:p-6 text-slate-100">
-      {/* Brand Header */}
-      <div className="text-center mb-8 max-w-xl">
-        <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-slate-800 border border-slate-700 shadow-md mb-4">
-          <span className="flex h-3 w-3 rounded-full bg-emerald-500 animate-ping" />
-          <span className="text-xs font-semibold tracking-wider uppercase text-emerald-400">Clinical Modern Platform</span>
+    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 flex flex-col justify-center items-center p-4 sm:p-6 lg:p-8 text-slate-100">
+      {/* Enterprise Western Clinical Portal Header */}
+      <div className="text-center mb-8 max-w-2xl">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-800 border border-slate-700 shadow-md mb-3">
+          <Building2 className="w-4 h-4 text-blue-400" />
+          <span className="text-xs font-bold tracking-wider uppercase text-slate-300">
+            Enterprise Clinical Health Gateway
+          </span>
         </div>
         <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-white flex items-center justify-center gap-3">
-          <span className="text-blue-400">Aarogya</span>Care
+          <span className="text-blue-400">Elder Care Form</span>
         </h1>
-        <p className="text-slate-300 text-base sm:text-lg mt-2 font-medium">
-          Elderly Medication & Remote Caregiver Management System
+        <p className="text-slate-300 text-sm sm:text-base mt-2 font-medium">
+          Comprehensive Medication Adherence, Caregiver Oversight & Clinical Alert Portal
         </p>
       </div>
 
-      <div className="w-full max-w-4xl grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* Left Side: Role Selector & Demo Badges */}
-        <div className="lg:col-span-7 bg-slate-800/90 border border-slate-700/80 rounded-2xl p-6 sm:p-8 backdrop-blur shadow-2xl">
-          <div className="flex items-center justify-between mb-4 border-b border-slate-700/60 pb-4">
-            <h2 className="text-xl font-bold text-white flex items-center gap-2">
-              <UserCheck className="w-5 h-5 text-blue-400" />
-              Select Profile & Role
-            </h2>
-            <span className="text-xs font-mono bg-blue-900/60 text-blue-300 border border-blue-700 px-2.5 py-1 rounded-md">
-              4-Digit PIN Access
-            </span>
-          </div>
+      <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        {/* Left Side: Role Selector & Judge Quick-Start Guide */}
+        <div className="lg:col-span-7 space-y-6">
+          {/* Main Role Card */}
+          <div className="bg-slate-800/90 border border-slate-700/80 rounded-2xl p-6 sm:p-7 backdrop-blur shadow-2xl">
+            <div className="flex items-center justify-between mb-4 border-b border-slate-700/60 pb-3">
+              <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                <UserCheck className="w-5 h-5 text-blue-400" />
+                Select Portal Access Level
+              </h2>
+              <span className="text-xs font-mono bg-blue-900/60 text-blue-300 border border-blue-700 px-2.5 py-1 rounded-md">
+                4-Digit Passcode Protected
+              </span>
+            </div>
 
-          <p className="text-sm text-slate-300 mb-6">
-            Choose which interface to enter. For judges, demo PINs are displayed below. You can also click <strong>"Quick Access"</strong> to test immediately without typing.
-          </p>
-
-          {/* Role Cards */}
-          <div className="space-y-3.5">
-            {rolesConfig.map(role => {
-              const Icon = role.icon;
-              const isSelected = selectedRole === role.id;
-              return (
-                <div
-                  key={role.id}
-                  onClick={() => {
-                    setSelectedRole(role.id);
-                    setPin('');
-                    setErrorMsg('');
-                  }}
-                  className={`cursor-pointer rounded-xl p-4 sm:p-5 border-2 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${
-                    isSelected
-                      ? 'border-blue-400 bg-slate-700/90 shadow-lg ring-2 ring-blue-500/20'
-                      : 'border-slate-700 bg-slate-800/60 hover:bg-slate-700/40 hover:border-slate-600'
-                  }`}
-                >
-                  <div className="flex items-start gap-4">
-                    <div className={`p-3 rounded-xl ${isSelected ? 'bg-blue-600 text-white' : 'bg-slate-700 text-slate-300'}`}>
-                      <Icon className="w-6 h-6" />
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <h3 className="font-bold text-lg text-white">{role.label}</h3>
-                        <span className="text-xs px-2 py-0.5 rounded-full bg-slate-900 text-slate-300 font-mono border border-slate-700">
-                          PIN: <strong className="text-amber-400 font-bold">{role.demoPin}</strong>
-                        </span>
-                      </div>
-                      <p className="text-xs font-medium text-slate-400 mt-0.5">{role.subtitle}</p>
-                      <p className="text-xs text-slate-300 mt-1.5 leading-relaxed">{role.desc}</p>
-                    </div>
-                  </div>
-
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      directQuickLogin(role.id);
+            {/* Role Cards List */}
+            <div className="space-y-3">
+              {rolesConfig.map(role => {
+                const Icon = role.icon;
+                const isSelected = selectedRole === role.id;
+                return (
+                  <div
+                    key={role.id}
+                    onClick={() => {
+                      setSelectedRole(role.id);
+                      setPin('');
+                      setErrorMsg('');
                     }}
-                    className="self-end sm:self-center shrink-0 inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold rounded-lg bg-blue-600 hover:bg-blue-500 text-white transition-colors shadow-sm"
+                    className={`cursor-pointer rounded-xl p-4 border-2 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
+                      isSelected
+                        ? 'border-blue-400 bg-slate-700/90 shadow-lg ring-2 ring-blue-500/20'
+                        : 'border-slate-700 bg-slate-800/60 hover:bg-slate-700/40 hover:border-slate-600'
+                    }`}
                   >
-                    Quick Access
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              );
-            })}
+                    <div className="flex items-start gap-3.5">
+                      <div className={`p-2.5 rounded-xl ${isSelected ? 'bg-blue-600 text-white' : 'bg-slate-700 text-slate-300'}`}>
+                        <Icon className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <h3 className="font-bold text-base text-white">{role.label}</h3>
+                          <span className="text-xs px-2 py-0.5 rounded-md bg-slate-900 text-slate-300 font-mono border border-slate-700">
+                            PIN: <strong className="text-amber-400 font-bold">{role.demoPin}</strong>
+                          </span>
+                        </div>
+                        <p className="text-xs font-medium text-slate-400 mt-0.5">{role.subtitle}</p>
+                        <p className="text-xs text-slate-300 mt-1 leading-relaxed">{role.desc}</p>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        directQuickLogin(role.id);
+                      }}
+                      className="self-end sm:self-center shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg bg-blue-600 hover:bg-blue-500 text-white transition-colors shadow-sm"
+                    >
+                      <span>1-Click Enter</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
           </div>
 
-          {/* Quick Notice for Judges */}
-          <div className="mt-6 p-4 rounded-xl bg-blue-950/50 border border-blue-800/60 flex items-start gap-3">
-            <KeyRound className="w-5 h-5 text-blue-400 shrink-0 mt-0.5" />
-            <div className="text-xs text-slate-300 leading-relaxed">
-              <strong className="text-blue-300 font-semibold">Judge Fast-Switch Note:</strong> You can enter PIN on the keypad, or tap any <strong className="text-white">Quick Access</strong> button above. Inside the app, the top navigation always provides a 1-click role switcher.
+          {/* Structured Judge & Evaluator Quick-Start Guide Panel */}
+          <div className="bg-gradient-to-br from-slate-800 to-slate-900 border-2 border-blue-900/60 rounded-2xl p-6 shadow-xl space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-700/60 pb-3">
+              <div className="flex items-center gap-2 text-blue-400 font-bold text-sm">
+                <ClipboardCheck className="w-5 h-5" />
+                <span>Judge & Evaluator Quick-Start Guide</span>
+              </div>
+              <span className="text-[11px] font-bold uppercase tracking-wider bg-blue-950 text-blue-300 border border-blue-800 px-2.5 py-0.5 rounded-full">
+                Interactive Evaluation
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+              <div
+                onClick={() => directQuickLogin('elderly')}
+                className="cursor-pointer p-3 rounded-xl bg-slate-800/80 border border-slate-700 hover:border-blue-400 hover:bg-slate-700 transition-all"
+              >
+                <div className="flex items-center justify-between mb-1">
+                  <span className="font-bold text-blue-300">1. Senior Mode</span>
+                  <span className="font-mono text-amber-400 font-bold">1111</span>
+                </div>
+                <p className="text-slate-400 text-[11px]">
+                  Test oversized buttons, 1-tap taken confirmation, audio directions & emergency SOS.
+                </p>
+                <span className="text-[10px] text-blue-400 font-bold mt-2 block hover:underline">Click to test →</span>
+              </div>
+
+              <div
+                onClick={() => directQuickLogin('caretaker')}
+                className="cursor-pointer p-3 rounded-xl bg-slate-800/80 border border-slate-700 hover:border-emerald-400 hover:bg-slate-700 transition-all"
+              >
+                <div className="flex items-center justify-between mb-1">
+                  <span className="font-bold text-emerald-300">2. Caretaker</span>
+                  <span className="font-mono text-amber-400 font-bold">2222</span>
+                </div>
+                <p className="text-slate-400 text-[11px]">
+                  Click <strong>"Simulate Missed Dose"</strong> in header to trigger reactive email alerts.
+                </p>
+                <span className="text-[10px] text-emerald-400 font-bold mt-2 block hover:underline">Click to test →</span>
+              </div>
+
+              <div
+                onClick={() => directQuickLogin('family')}
+                className="cursor-pointer p-3 rounded-xl bg-slate-800/80 border border-slate-700 hover:border-purple-400 hover:bg-slate-700 transition-all"
+              >
+                <div className="flex items-center justify-between mb-1">
+                  <span className="font-bold text-purple-300">3. Family View</span>
+                  <span className="font-mono text-amber-400 font-bold">3333</span>
+                </div>
+                <p className="text-slate-400 text-[11px]">
+                  Review weekly adherence history, scheduled clinic consults & care digests.
+                </p>
+                <span className="text-[10px] text-purple-400 font-bold mt-2 block hover:underline">Click to test →</span>
+              </div>
+            </div>
+
+            {/* Note on live customization */}
+            <div className="p-3 rounded-xl bg-blue-950/60 border border-blue-800 text-xs text-slate-300 flex items-start gap-2.5">
+              <Sparkles className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
+              <div>
+                <strong className="text-blue-300 font-semibold">Live Customization Note:</strong> Patient details (e.g., Arthur Pendelton), Caretaker names (Sarah Jenkins), Family names (David Pendelton), and <strong>Diagnosed Medical Conditions</strong> can be edited live inside the app via the <strong className="text-white">"Edit Profile & Diagnoses"</strong> top bar button.
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Right Side: Tactile PIN Keypad */}
-        <div className="lg:col-span-5 bg-slate-800/90 border border-slate-700/80 rounded-2xl p-6 sm:p-8 backdrop-blur shadow-2xl flex flex-col items-center">
-          <div className="text-center mb-6">
-            <span className="text-xs uppercase font-bold text-slate-400 tracking-wider">Authenticating</span>
+        {/* Right Side: Keypad */}
+        <div className="lg:col-span-5 bg-slate-800/90 border border-slate-700/80 rounded-2xl p-6 sm:p-7 backdrop-blur shadow-2xl flex flex-col items-center">
+          <div className="text-center mb-5">
+            <span className="text-xs uppercase font-bold text-slate-400 tracking-wider">Passcode Verification</span>
             <h3 className="text-xl font-bold text-white capitalize mt-0.5">
               {rolesConfig.find(r => r.id === selectedRole)?.label}
             </h3>
             <p className="text-xs text-slate-400 mt-1">
-              Demo PIN is <span className="font-bold text-amber-400 font-mono text-sm">{passcodes[selectedRole]}</span>
+              Clickable demo passcode: <button type="button" onClick={() => directQuickLogin(selectedRole)} className="font-bold text-amber-400 font-mono text-sm underline hover:text-amber-300">{passcodes[selectedRole]} (Click to Auto-Login)</button>
             </p>
           </div>
 
           {/* PIN Dots Display */}
-          <div className={`flex justify-center items-center gap-4 my-4 p-4 rounded-xl bg-slate-900 border border-slate-700 w-full ${isShaking ? 'animate-bounce border-red-500' : ''}`}>
+          <div className={`flex justify-center items-center gap-4 my-3 p-4 rounded-xl bg-slate-900 border border-slate-700 w-full ${isShaking ? 'animate-bounce border-red-500' : ''}`}>
             {[0, 1, 2, 3].map((idx) => {
               const hasDigit = pin.length > idx;
               return (
@@ -207,7 +289,7 @@ export default function LoginScreen() {
 
           {/* Error Message */}
           {errorMsg && (
-            <div className="text-xs text-red-400 flex items-center gap-1.5 mb-4 text-center">
+            <div className="text-xs text-red-400 flex items-center gap-1.5 mb-3 text-center">
               <AlertCircle className="w-4 h-4 shrink-0" />
               <span>{errorMsg}</span>
             </div>
@@ -220,7 +302,7 @@ export default function LoginScreen() {
                 key={num}
                 type="button"
                 onClick={() => handleKeyPress(num.toString())}
-                className="h-14 rounded-xl bg-slate-700/80 hover:bg-slate-600 active:bg-blue-600 border border-slate-600/80 text-xl font-bold text-white shadow transition-all active:scale-95 flex items-center justify-center"
+                className="h-13 rounded-xl bg-slate-700/80 hover:bg-slate-600 active:bg-blue-600 border border-slate-600/80 text-xl font-bold text-white shadow transition-all active:scale-95 flex items-center justify-center py-3"
               >
                 {num}
               </button>
@@ -229,7 +311,7 @@ export default function LoginScreen() {
             <button
               type="button"
               onClick={handleClear}
-              className="h-14 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-semibold text-slate-300 transition-all flex items-center justify-center"
+              className="h-13 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-semibold text-slate-300 transition-all flex items-center justify-center py-3"
             >
               Clear
             </button>
@@ -237,7 +319,7 @@ export default function LoginScreen() {
             <button
               type="button"
               onClick={() => handleKeyPress('0')}
-              className="h-14 rounded-xl bg-slate-700/80 hover:bg-slate-600 active:bg-blue-600 border border-slate-600/80 text-xl font-bold text-white shadow transition-all active:scale-95 flex items-center justify-center"
+              className="h-13 rounded-xl bg-slate-700/80 hover:bg-slate-600 active:bg-blue-600 border border-slate-600/80 text-xl font-bold text-white shadow transition-all active:scale-95 flex items-center justify-center py-3"
             >
               0
             </button>
@@ -245,23 +327,20 @@ export default function LoginScreen() {
             <button
               type="button"
               onClick={handleDelete}
-              className="h-14 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-semibold text-slate-300 transition-all flex items-center justify-center"
+              className="h-13 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-semibold text-slate-300 transition-all flex items-center justify-center py-3"
             >
               ⌫ Del
             </button>
           </div>
 
-          {/* Fill Demo PIN shortcut */}
+          {/* 1-Click Demo Login shortcut */}
           <button
             type="button"
-            onClick={() => {
-              const demo = passcodes[selectedRole];
-              setPin(demo);
-              verifyPin(demo, selectedRole);
-            }}
-            className="mt-6 text-xs text-blue-400 hover:text-blue-300 underline font-medium"
+            onClick={() => directQuickLogin(selectedRole)}
+            className="mt-5 w-full py-2.5 rounded-xl bg-blue-600/80 hover:bg-blue-600 text-white font-bold text-xs transition-colors flex items-center justify-center gap-2 shadow-sm"
           >
-            Auto-fill demo PIN ({passcodes[selectedRole]})
+            <span>One-Click Login as {rolesConfig.find(r => r.id === selectedRole)?.label}</span>
+            <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </div>
       </div>

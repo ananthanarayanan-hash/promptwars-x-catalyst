@@ -18,6 +18,7 @@ import {
 
 export default function MedicationsTab() {
   const {
+    patient,
     medications,
     addMedication,
     updateMedication,
@@ -40,7 +41,7 @@ export default function MedicationsTab() {
     scheduledTime: '08:30 AM',
     mealRelation: 'After breakfast',
     seniorInstructions: '',
-    prescribedBy: 'Dr. Arvind Swaminathan',
+    prescribedBy: patient.doctors[0]?.name || 'Dr. Arthur Vance',
     stockLeft: 30,
     refillThreshold: 10,
     shape: 'Round White Tablet'
@@ -110,7 +111,7 @@ export default function MedicationsTab() {
         <div>
           <h2 className="text-2xl font-bold text-slate-900">Medication Schedule & Pharmacy Stock</h2>
           <p className="text-xs sm:text-sm text-slate-500">
-            Manage daily prescription schedules, stock levels, and elderly instructions for Ramesh Iyer
+            Manage daily prescription schedules, stock levels, and directions for {patient.name}
           </p>
         </div>
 

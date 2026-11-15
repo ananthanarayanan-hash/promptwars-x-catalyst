@@ -6,13 +6,19 @@ import SeniorMode from './components/senior/SeniorMode';
 import CaretakerDashboard from './components/caretaker/CaretakerDashboard';
 import EmailOutboxModal from './components/caretaker/EmailOutboxModal';
 import EmergencyModal from './components/common/EmergencyModal';
+import ProfileModal from './components/common/ProfileModal';
 
 export default function App() {
   const { currentRole } = useApp();
 
   // If no active session, show PIN Login screen
   if (!currentRole) {
-    return <LoginScreen />;
+    return (
+      <>
+        <LoginScreen />
+        <ProfileModal />
+      </>
+    );
   }
 
   return (
@@ -30,6 +36,7 @@ export default function App() {
       {/* Global Interactive Drawers & Modals */}
       <EmailOutboxModal />
       <EmergencyModal />
+      <ProfileModal />
     </div>
   );
 }

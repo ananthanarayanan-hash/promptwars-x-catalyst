@@ -63,13 +63,13 @@ export default function CaretakerDashboard() {
           <div className="p-4 rounded-2xl bg-slate-800/80 border border-slate-700/80">
             <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Monitoring Patient</span>
             <div className="font-bold text-base text-white mt-0.5">{patient.name}</div>
-            <div className="text-xs text-slate-400">Age {patient.age} • Malleshwaram</div>
+            <div className="text-xs text-slate-400">Age {patient.age} • {patient.location ? patient.location.split(',')[1] || 'Outpatient' : 'Outpatient'}</div>
             <div className="mt-2 pt-2 border-t border-slate-700/60 flex items-center justify-between text-[11px]">
-              <span className="text-slate-400">Role:</span>
+              <span className="text-slate-400">Active View:</span>
               <span className={`font-bold px-2 py-0.5 rounded-md ${
                 isFamily ? 'bg-purple-900/60 text-purple-300 border border-purple-700' : 'bg-emerald-900/60 text-emerald-300 border border-emerald-700'
               }`}>
-                {isFamily ? 'Rahul (Family)' : 'Priya (Caretaker)'}
+                {isFamily ? `${patient.emergencyContacts[1]?.name || 'Family'}` : `${patient.emergencyContacts[0]?.name || 'Caretaker'}`}
               </span>
             </div>
           </div>

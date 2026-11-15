@@ -11,7 +11,10 @@ import {
   Save,
   CheckCircle2,
   AlertTriangle,
-  Stethoscope
+  Stethoscope,
+  Activity,
+  Plus,
+  X
 } from 'lucide-react';
 
 export default function SettingsTab() {
@@ -20,6 +23,9 @@ export default function SettingsTab() {
     passcodes,
     updatePasscode,
     resetToDefaults,
+    updateNames,
+    addDiagnosisCondition,
+    removeDiagnosisCondition,
     showToast
   } = useApp();
 
@@ -28,6 +34,11 @@ export default function SettingsTab() {
     caretaker: passcodes.caretaker,
     family: passcodes.family
   });
+
+  const [pName, setPName] = useState(patient.name);
+  const [cName, setCName] = useState(patient.emergencyContacts[0]?.name || 'Sarah Jenkins');
+  const [fName, setFName] = useState(patient.emergencyContacts[1]?.name || 'David Pendelton');
+  const [newCond, setNewCond] = useState('');
 
   const handleSavePin = (role) => {
     const newPin = pins[role];
@@ -38,13 +49,144 @@ export default function SettingsTab() {
     }
   };
 
+  const handleSaveAllNames = (e) => {
+    e.preventDefault();
+    updateNames(pName.trim(), cName.trim(), fName.trim());
+  };
+
+  const handleAddCond = () => {
+    if (newCond.trim()) {
+      addDiagnosisCondition(newCond.trim());
+      setNewCond('');
+    }
+  };
+
   return (
     <div className="space-y-8 max-w-4xl">
       <div>
         <h2 className="text-2xl font-bold text-slate-900">Patient Profile & Security Settings</h2>
         <p className="text-xs sm:text-sm text-slate-500">
-          Manage 4-digit role passcodes, emergency contacts, and clinical record details
+          Manage dynamic names, diagnosed conditions, 4-digit role passcodes, and emergency contacts
         </p>
+      </div>
+
+      {/* Dynamic Names Customizer */}
+      <div className="p-6 rounded-3xl bg-white border-2 border-slate-200 shadow-sm space-y-4">
+        <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div className="flex items-center gap-2">
+            <User className="w-5 h-5 text-blue-600" />
+            <h3 className="text-lg font-bold text-slate-900">Editable Role Names</h3>
+          </div>
+          <span className="text-xs font-mono bg-blue-50 text-blue-800 px-2.5 py-1 rounded-md font-bold">
+            Live Synchronized
+          </span>
+        </div>
+
+        <form onSubmit={handleSaveAllNames} className="space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-xs font-bold text-slate-700 uppercase mb-1">
+                Patient Full Name
+              </label>
+              <input
+                type="text"
+                required
+                value={pName}
+                onChange={(e) => setPName(e.target.value)}
+                className="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-300 font-medium"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-slate-700 uppercase mb-1">
+                Primary Caretaker Name
+              </label>
+              <input
+                type="text"
+                required
+                value={cName}
+                onChange={(e) => setCName(e.target.value)}
+                className="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-300 font-medium"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-slate-700 uppercase mb-1">
+                Family Monitor Name
+              </label>
+              <input
+                type="text"
+                required
+                value={fName}
+                onChange={(e) => setFName(e.target.value)}
+                className="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-300 font-medium"
+              />
+            </div>
+          </div>
+
+          <div className="flex justify-end">
+            <button
+              type="submit"
+              className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-sm"
+            >
+              Save Names
+            </button>
+          </div>
+        </form>
+      </div>
+
+      {/* Patient Diagnosed Medical Condition Field */}
+      <div className="p-6 rounded-3xl bg-white border-2 border-slate-200 shadow-sm space-y-4">
+        <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
+          <Activity className="w-5 h-5 text-blue-600" />
+          <h3 className="text-lg font-bold text-slate-900">Diagnosed Condition(s) / Medical Profile</h3>
+        </div>
+
+        <p className="text-xs text-slate-500">
+          Enter or edit diagnosed medical conditions. These conditions are displayed in the header and dynamically adjust the AI Care Insights engine.
+        </p>
+
+        <div className="flex flex-wrap gap-2 pt-1">
+          {patient.conditions.map((condition) => (
+            <span
+              key={condition}
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 border border-blue-300 text-xs font-bold text-blue-900"
+            >
+              <span>{condition}</span>
+              <button
+                type="button"
+                onClick={() => removeDiagnosisCondition(condition)}
+                className="p-0.5 rounded-full hover:bg-blue-200 text-blue-700 hover:text-red-700"
+              >
+                <X className="w-3 h-3" />
+              </button>
+            </span>
+          ))}
+        </div>
+
+        <div className="flex items-center gap-2 pt-2">
+          <input
+            type="text"
+            value={newCond}
+            onChange={(e) => setNewCond(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                handleAddCond();
+              }
+            }}
+            placeholder="Type new diagnosis (e.g., Congestive Heart Failure, Osteoarthritis)..."
+            className="flex-1 px-3.5 py-2 text-sm rounded-xl border border-slate-300"
+          />
+          <button
+            type="button"
+            onClick={handleAddCond}
+            className="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold flex items-center gap-1 shrink-0"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            <span>Add Diagnosis</span>
+          </button>
+        </div>
       </div>
 
       {/* 4-Digit Passcode Management */}
@@ -55,13 +197,13 @@ export default function SettingsTab() {
         </div>
 
         <p className="text-xs text-slate-500">
-          Passcodes protect role-based access. Judges can test updating these PINs; changes will reflect immediately on the login keypad.
+          Passcodes protect role-based access. Changes reflect immediately on the login keypad.
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {/* Elderly PIN */}
           <div className="p-4 rounded-2xl bg-blue-50/50 border border-blue-200 space-y-2">
-            <span className="text-xs font-bold text-blue-900 uppercase">Senior Mode (Ramesh)</span>
+            <span className="text-xs font-bold text-blue-900 uppercase">Senior Mode ({patient.name})</span>
             <div className="flex items-center gap-2">
               <input
                 type="text"
@@ -82,7 +224,7 @@ export default function SettingsTab() {
 
           {/* Caretaker PIN */}
           <div className="p-4 rounded-2xl bg-emerald-50/50 border border-emerald-200 space-y-2">
-            <span className="text-xs font-bold text-emerald-900 uppercase">Caretaker (Priya)</span>
+            <span className="text-xs font-bold text-emerald-900 uppercase">Caretaker ({patient.emergencyContacts[0]?.name})</span>
             <div className="flex items-center gap-2">
               <input
                 type="text"
@@ -103,7 +245,7 @@ export default function SettingsTab() {
 
           {/* Family PIN */}
           <div className="p-4 rounded-2xl bg-purple-50/50 border border-purple-200 space-y-2">
-            <span className="text-xs font-bold text-purple-900 uppercase">Family Monitor (Rahul)</span>
+            <span className="text-xs font-bold text-purple-900 uppercase">Family Monitor ({patient.emergencyContacts[1]?.name})</span>
             <div className="flex items-center gap-2">
               <input
                 type="text"
@@ -124,47 +266,6 @@ export default function SettingsTab() {
         </div>
       </div>
 
-      {/* Patient Profile Details Card */}
-      <div className="p-6 rounded-3xl bg-white border-2 border-slate-200 shadow-sm space-y-4">
-        <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
-          <User className="w-5 h-5 text-blue-600" />
-          <h3 className="text-lg font-bold text-slate-900">Patient Demographic & Health Record</h3>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-          <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
-            <span className="text-slate-400 block font-semibold uppercase text-[10px]">Full Name & Age</span>
-            <strong className="text-slate-900 text-sm block mt-0.5">{patient.name}, {patient.age} years ({patient.gender})</strong>
-          </div>
-
-          <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
-            <span className="text-slate-400 block font-semibold uppercase text-[10px]">Blood Group & Allergies</span>
-            <strong className="text-slate-900 text-sm block mt-0.5">
-              Blood: {patient.bloodGroup} • Allergies: {patient.allergies.join(', ')}
-            </strong>
-          </div>
-
-          <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 sm:col-span-2">
-            <span className="text-slate-400 block font-semibold uppercase text-[10px]">Residence Location</span>
-            <strong className="text-slate-900 text-sm flex items-center gap-1.5 mt-0.5">
-              <MapPin className="w-4 h-4 text-slate-500 shrink-0" />
-              {patient.location}
-            </strong>
-          </div>
-
-          <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 sm:col-span-2">
-            <span className="text-slate-400 block font-semibold uppercase text-[10px]">Chronic Conditions</span>
-            <div className="flex flex-wrap gap-1.5 mt-1">
-              {patient.conditions.map((c, i) => (
-                <span key={i} className="px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800 font-semibold text-xs">
-                  {c}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-
       {/* Emergency Contacts Directory */}
       <div className="p-6 rounded-3xl bg-white border-2 border-slate-200 shadow-sm space-y-4">
         <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
@@ -179,7 +280,7 @@ export default function SettingsTab() {
                 <span className="font-bold text-sm text-slate-900">{contact.name}</span>
                 {contact.isPrimary && (
                   <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
-                    Primary
+                    Primary Caregiver
                   </span>
                 )}
               </div>
@@ -198,13 +299,13 @@ export default function SettingsTab() {
         <div>
           <h4 className="font-bold text-red-950 text-base">Reset Demo Data</h4>
           <p className="text-xs text-red-800 mt-0.5">
-            Restores all original Indian patient schedules, appointments, passcodes, and email logs in localStorage.
+            Restores original clinical defaults (Arthur Pendelton, Sarah Jenkins, David Pendelton) in localStorage.
           </p>
         </div>
 
         <button
           onClick={() => {
-            if (confirm("Reset all platform data back to original Ramesh Iyer sample data?")) {
+            if (confirm("Reset all platform data back to original clinical sample defaults?")) {
               resetToDefaults();
             }
           }}

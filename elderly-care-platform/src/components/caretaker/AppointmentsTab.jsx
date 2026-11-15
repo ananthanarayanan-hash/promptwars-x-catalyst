@@ -17,6 +17,7 @@ import {
 
 export default function AppointmentsTab() {
   const {
+    patient,
     appointments,
     addAppointment,
     updateAppointment,
@@ -34,7 +35,7 @@ export default function AppointmentsTab() {
     dateTime: '',
     purpose: '',
     instructions: '',
-    contactNumber: '+91 80 2502 4444'
+    contactNumber: '+1 (617) 726-2000'
   });
 
   const handleOpenAdd = () => {
@@ -42,11 +43,11 @@ export default function AppointmentsTab() {
     setFormData({
       doctorName: '',
       specialty: 'Cardiologist',
-      hospital: 'Manipal Hospital, Old Airport Road, Bengaluru',
+      hospital: 'Massachusetts General Hospital - Yawkey Center, Boston',
       dateTime: new Date(Date.now() + 5 * 86400000).toISOString().slice(0, 16),
       purpose: 'Regular Consultation & Vitals Check',
       instructions: 'Bring blood test reports and home BP readings log.',
-      contactNumber: '+91 80 2502 4444'
+      contactNumber: '+1 (617) 726-2000'
     });
     setIsModalOpen(true);
   };
